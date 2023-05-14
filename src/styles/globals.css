@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply overflow-x-hidden bg-zinc-900;
+}
+
+.login div.cl-card > div:last-child {
+  @apply bg-red-700;
+}

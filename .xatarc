@@ -1,0 +1,7 @@
+{
+  "databaseURL": "https://Yaser-Andre-s-workspace-hre58l.us-east-1.xata.sh/db/netlix",
+  "codegen": {
+    "output": "src/lib/xata/index.ts",
+    "branch": "dev"
+  }
+}
