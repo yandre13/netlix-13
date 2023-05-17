@@ -10,12 +10,17 @@ const tables = [
   {
     name: "users",
     columns: [
-      { name: "name", type: "string" },
       { name: "email", type: "email", unique: true },
       { name: "username", type: "string" },
       { name: "picture", type: "string" },
       { name: "created_at", type: "datetime", defaultValue: "now" },
       { name: "updated_at", type: "datetime", defaultValue: "now" },
+      {
+        name: "name",
+        type: "string",
+        notNull: true,
+        defaultValue: "REPLACE_THIS_TEXT",
+      },
     ],
   },
   {
@@ -50,11 +55,21 @@ const tables = [
   {
     name: "profiles",
     columns: [
-      { name: "name", type: "string" },
-      { name: "picture", type: "string" },
       { name: "created_at", type: "datetime", defaultValue: "now" },
       { name: "updated_at", type: "datetime", defaultValue: "now" },
       { name: "user", type: "link", link: { table: "users" } },
+      {
+        name: "name",
+        type: "string",
+        notNull: true,
+        defaultValue: "REPLACE_THIS_TEXT",
+      },
+      {
+        name: "picture",
+        type: "string",
+        notNull: true,
+        defaultValue: "REPLACE_THIS_TEXT",
+      },
     ],
   },
 ] as const;

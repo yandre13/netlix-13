@@ -1,19 +1,12 @@
 'use client'
-import type { Profile } from '@/lib/xata/users'
 import { useAuth } from '@clerk/nextjs'
-import { useQuery } from '@tanstack/react-query'
 import Image from 'next/image'
 import { Suspense } from 'react'
 import Spinner from './spinner'
-
-async function getProfiles(userId: string) {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/profiles?userId=${userId}`
-  )
-  const { data } = await res.json()
-
-  return data as Profile[]
-}
+import useProfiles from '@/hooks/useProfiles'
+import { useSetAtom } from 'jotai'
+import { profileAtom } from '@/utils/atoms'
+import { useRouter } from 'next/navigation'
 
 export default function MyProfiles() {
   const { userId, isSignedIn } = useAuth()
@@ -24,8 +17,7 @@ export default function MyProfiles() {
 
   return (
     <>
-      <h1 className="text-5xl font-semibold text-white">Who is watching?</h1>
-
+      <h1 className="text-5xl font-semibold text-white">{`Who's watching Netlix?`}</h1>
       <Suspense fallback={<Spinner size="lg" />}>
         <Profiles userId={userId} />
       </Suspense>
@@ -34,11 +26,9 @@ export default function MyProfiles() {
 }
 
 export function Profiles({ userId }: { userId: string }) {
-  const { data } = useQuery({
-    queryKey: ['profiles', userId],
-    queryFn: () => getProfiles(userId),
-    staleTime: Infinity,
-  })
+  const { data } = useProfiles({ userId })
+  const setProfile = useSetAtom(profileAtom)
+  const router = useRouter()
 
   return (
     <div className="mt-10 flex items-center justify-center gap-10">
@@ -47,13 +37,21 @@ export function Profiles({ userId }: { userId: string }) {
           key={profile.id}
           className="flex flex-col items-center justify-center"
         >
-          <Image
-            src={profile.picture || ''}
-            alt="profile"
-            width={200}
-            height={200}
-            className="h-44 w-44 rounded-md border-2 border-transparent object-cover"
-          />
+          <button
+            className="rounded-md transition-all ease-in-out hover:scale-105 focus:ring-1 focus:ring-white focus:ring-offset-2"
+            onClick={() => {
+              setProfile(profile)
+              router.push('/watch')
+            }}
+          >
+            <Image
+              src={profile.picture || ''}
+              alt="profile"
+              width={200}
+              height={200}
+              className="h-44 w-44 rounded-md border-2 border-transparent object-cover"
+            />
+          </button>
           <p className="mt-5 text-xl font-medium text-white">{profile.name}</p>
         </div>
       ))}

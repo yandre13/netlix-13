@@ -1,11 +1,11 @@
-import clsx from 'clsx'
+import { cn } from '@/lib/cn'
 
 type Size = 'sm' | 'md' | 'lg' | 'xl' | '2xl'
 
 export default function Spinner({ size = 'sm' }: { size?: Size }) {
   return (
     <div
-      className={clsx(
+      className={cn(
         'animate-spin rounded-full border-[3px] border-current border-t-transparent text-red-800',
         {
           'm-3 h-6 w-6': size === 'sm',
