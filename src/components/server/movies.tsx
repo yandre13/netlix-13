@@ -4,9 +4,7 @@ import { Movie } from '@/lib/xata/movies'
 async function getMovies() {
   // await 3s
   await new Promise((resolve) => setTimeout(resolve, 3000))
-
   const data = await db.movies.getAll()
-
   return data as Movie[]
 }
 

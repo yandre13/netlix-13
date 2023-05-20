@@ -1,7 +1,7 @@
 'use client'
-
+import useCookie from '@/hooks/useCookie'
+import type { Profile } from '@/lib/xata/users'
 import Image from 'next/image'
-import Cookies from 'js-cookie'
 import { useRouter } from 'next/navigation'
 
 export default function ProfileButton({
@@ -11,9 +11,10 @@ export default function ProfileButton({
 }: {
   picture: string
   name?: string
-  profile: string
+  profile: Profile
 }) {
   const router = useRouter()
+  const { write } = useCookie('my-profile')
 
   return (
     <button
@@ -21,10 +22,10 @@ export default function ProfileButton({
       // href="/watch"
       onClick={() => {
         // setProfile(profile)
-        Cookies.set('my-profile', profile)
+        write(profile)
         // console.log('setting', { profile })
         router.push('/watch')
-        router.refresh()
+        // router.refresh()
       }}
     >
       <Image

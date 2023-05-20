@@ -35,7 +35,7 @@ export default function Navbar() {
   const cookiesList = cookies()
   const profile: Profile = JSON.parse(cookiesList.get('my-profile')?.value!) //middleware will set this cookie
 
-  console.log('Servers', profile.name)
+  // console.log('Servers', profile.name)
   return (
     <>
       <header className="fixed inset-x-0 top-0 z-50">
@@ -81,7 +81,7 @@ export default function Navbar() {
               <Bell className="h-5 w-5" />
             </div>
             {/* <Suspense fallback={<Spinner />}> */}
-            <ProfileMenu profile={profile} />
+            <ProfileMenu profileSsr={profile} />
             {/* </Suspense> */}
           </div>
         </section>

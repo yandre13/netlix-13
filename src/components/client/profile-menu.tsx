@@ -1,17 +1,19 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Image from 'next/image'
-import { ChevronDown, Search, Bell, LogOut } from 'lucide-react'
+import { ChevronDown, LogOut } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { useRouter } from 'next/navigation'
 import { useClerk } from '@clerk/nextjs'
 import { BasicDropdown } from '../dropdown'
-import { Profile } from '@/lib/xata/users'
+import type { Profile } from '@/lib/xata/users'
+import useCookie from '@/hooks/useCookie'
 
-export default function ProfileMenu({ profile }: { profile: Profile }) {
+export default function ProfileMenu({ profileSsr }: { profileSsr: Profile }) {
   const [open, setOpen] = useState(false)
   const { signOut } = useClerk()
   const router = useRouter()
+  const { value: profile } = useCookie<Profile>('my-profile', profileSsr)
 
   const menuItems = [
     {
@@ -27,16 +29,15 @@ export default function ProfileMenu({ profile }: { profile: Profile }) {
   const onOpenChange = () => setOpen(!open)
 
   // useEffect(() => {
-  //   // because on first render profile is null, then gets from ls
-  //   const getProfileFromLocalStorage = () => {
-  //     const profile = localStorage.getItem('my-profile')
-  //     return profile ? JSON.parse(profile) : null
-  //   }
-  //   const profile = getProfileFromLocalStorage()
-  //   profile ? setProfile(profile) : router.push('/profiles')
-  // }, [profile?.id, router, setProfile])
+  // read from cookies
+  if (!profile) {
+    // router.push('/profiles') //handle this in middleware
+    return null
+  }
+  // }, [router, profile])
 
-  console.log('Clients', profile.name)
+  // if (!profile) return null
+  // console.log('Clients', profile.name)
 
   return (
     <div className="relative overflow-hidden">

@@ -2,14 +2,11 @@ import Movies from '@/components/server/movies'
 import Navbar from '@/components/navbar'
 import Spinner from '@/components/spinner'
 import { Button } from '@/components/ui/button'
-
 import { getRandomMovie } from '@/lib/xata/movies'
-import { UserButton } from '@clerk/nextjs'
+
 import { Info } from 'lucide-react'
 import Image from 'next/image'
 import { Suspense } from 'react'
-import { cookies } from 'next/headers'
-import { Profile } from '@/lib/xata/users'
 
 export default async function Watch() {
   const movie = await getRandomMovie()
