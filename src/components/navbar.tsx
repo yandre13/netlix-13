@@ -1,25 +1,17 @@
-'use client'
-
 import { BasicDropdown } from './dropdown'
-import { Suspense, useEffect, useState } from 'react'
-import Spinner from './spinner'
 import Image from 'next/image'
 import { Button } from './ui/button'
-import { ChevronDown, Search, Bell, LogOut } from 'lucide-react'
-import { cn } from '@/lib/cn'
-import { useAtom, useAtomValue } from 'jotai'
-import { profileAtom } from '@/utils/atoms'
-import { useRouter } from 'next/navigation'
-import { useClerk } from '@clerk/nextjs'
+import { ChevronDown, Search, Bell } from 'lucide-react'
+import { cookies } from 'next/headers'
+import { Profile } from '@/lib/xata/users'
+import ProfileMenu from './client/profile-menu'
 
 const items = [
   {
     label: 'Home',
-    onSelect: () => {},
   },
   {
     label: 'Series',
-    onSelect: () => {},
   },
   {
     label: 'Films',
@@ -39,68 +31,14 @@ const images = {
   hero: `${process.env.NEXT_PUBLIC_IMAGES_URL}/hero.jpg`,
 }
 
-const menuItems = [
-  {
-    label: 'Change profile',
-  },
-]
-const menuFooter = (onSelect: () => void) => ({
-  label: 'Logout',
-  onSelect,
-  icon: <LogOut className="h-4 w-4" />,
-})
-
-function ProfileMenu() {
-  const [open, setOpen] = useState(false)
-  const onOpenChange = () => setOpen(!open)
-  const router = useRouter()
-  const profile = useAtomValue(profileAtom)
-  const { signOut } = useClerk()
-
-  useEffect(() => {
-    if (!profile) {
-      router.push('/profiles')
-    }
-  }, [profile, router])
-
-  if (!profile) {
-    return null
-  }
-
-  return (
-    <div className="relative overflow-hidden">
-      <BasicDropdown
-        button={
-          <div className="flex items-center gap-2" role="button">
-            <Image
-              src={profile.picture}
-              alt="Profile picture"
-              width={72}
-              className="h-9 w-9 rounded-sm"
-              height={72}
-            />
-            <ChevronDown
-              className={cn('h-4 w-4 transition-transform', {
-                'rotate-180 transform': open,
-              })}
-            />
-          </div>
-        }
-        customClass="w-auto"
-        alignContent="end"
-        onOpenChange={onOpenChange}
-        header={profile.name}
-        items={menuItems}
-        footer={menuFooter(signOut)}
-      />
-    </div>
-  )
-}
-
 export default function Navbar() {
+  const cookiesList = cookies()
+  const profile: Profile = JSON.parse(cookiesList.get('my-profile')?.value!) //middleware will set this cookie
+
+  console.log('Servers', profile.name)
   return (
     <>
-      <header className="fixed inset-x-0 top-0">
+      <header className="fixed inset-x-0 top-0 z-50">
         <section className="container flex h-[88px] items-center gap-6 py-2 lg:gap-8">
           <div>
             <Image
@@ -142,9 +80,9 @@ export default function Navbar() {
             <div role="button">
               <Bell className="h-5 w-5" />
             </div>
-            <Suspense fallback={<Spinner />}>
-              <ProfileMenu />
-            </Suspense>
+            {/* <Suspense fallback={<Spinner />}> */}
+            <ProfileMenu profile={profile} />
+            {/* </Suspense> */}
           </div>
         </section>
       </header>

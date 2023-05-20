@@ -106,7 +106,10 @@ const defaultOptions = {
 
 export class XataClient extends DatabaseClient<DatabaseSchema> {
   constructor(options?: BaseClientOptions) {
-    super({ ...defaultOptions, ...options }, tables);
+    super(
+      { ...defaultOptions, ...options, apiKey: process.env.XATA_API_KEY },
+      tables
+    )
   }
 }
 

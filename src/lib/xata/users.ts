@@ -1,4 +1,5 @@
 import { db } from './db'
+import { OmitedProps } from './types'
 
 export const getUsers = async () => {
   const users = await db.users.getMany({
@@ -7,16 +8,6 @@ export const getUsers = async () => {
   })
   return users
 }
-
-type OmitedProps =
-  | 'created_at'
-  | 'updated_at'
-  | 'getMetadata'
-  | 'toSerializable'
-  | 'read'
-  | 'update'
-  | 'delete'
-  | 'replace'
 
 export type User = Omit<
   Awaited<ReturnType<typeof getUsers>>[number],

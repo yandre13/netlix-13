@@ -35,8 +35,8 @@ export async function POST(req: NextRequest) {
       // console.log({ newUser })
 
       const newProfile = await createProfile(newUser.id, {
-        name: newUser.username,
-        picture: newUser.picture,
+        name: newUser?.username || newUser?.name,
+        picture: newUser?.picture || '',
       })
 
       // console.log({ newProfile })

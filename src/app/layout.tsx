@@ -1,8 +1,8 @@
 import '../styles/globals.css'
 import { Inter } from 'next/font/google'
-import { ClerkProvider, SignIn, SignedIn, SignedOut } from '@clerk/nextjs'
-import { dark } from '@clerk/themes'
 import Providers from '@/utils/providers'
+import { ClerkProvider } from '@clerk/nextjs'
+import { dark } from '@clerk/themes'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -17,20 +17,20 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <ClerkProvider
-      appearance={{
-        baseTheme: dark,
-        elements: {
-          formButtonPrimary: 'bg-red-700 hover:bg-red-800',
-          footerActionLink: 'text-red-500 hover:text-red-600',
-        },
-      }}
-    >
-      <html lang="en" className="dark">
-        <body className={`${inter.className} bg-background`}>
+    <html lang="en" className="dark">
+      <body className={`${inter.className} bg-background`}>
+        <ClerkProvider
+          appearance={{
+            baseTheme: dark,
+            elements: {
+              formButtonPrimary: 'bg-red-700 hover:bg-red-800',
+              footerActionLink: 'text-red-500 hover:text-red-600',
+            },
+          }}
+        >
           <Providers>{children}</Providers>
-        </body>
-      </html>
-    </ClerkProvider>
+        </ClerkProvider>
+      </body>
+    </html>
   )
 }
