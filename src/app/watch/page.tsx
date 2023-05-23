@@ -13,9 +13,9 @@ export default async function Watch() {
 
   return (
     <main className="">
-      <Suspense fallback={<Spinner />}>
-        <Navbar />
-      </Suspense>
+      {/* <Suspense fallback={<Spinner />}> */}
+      <Navbar />
+      {/* </Suspense> */}
       <section className="relative">
         <video
           autoPlay
@@ -47,7 +47,7 @@ export default async function Watch() {
           </div>
         </div>
       </section>
-      <section>
+      <section className="container">
         <Suspense fallback={<Spinner />}>
           <Movies />
         </Suspense>

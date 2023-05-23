@@ -39,6 +39,12 @@ const tables = [
       { name: "actors", type: "multiple" },
       { name: "directors", type: "multiple" },
       { name: "writers", type: "multiple" },
+      {
+        name: "duration",
+        type: "string",
+        notNull: true,
+        defaultValue: "REPLACE_THIS_TEXT",
+      },
     ],
   },
   {

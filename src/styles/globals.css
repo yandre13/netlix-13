@@ -86,3 +86,12 @@
     @apply bg-red-700;
   }
 }
+
+.splide__track,
+.splide__list {
+  overflow: visible !important;
+}
+.swiper-slide,
+.splide__slide {
+  position: initial !important;
+}
