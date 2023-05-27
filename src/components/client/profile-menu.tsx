@@ -6,8 +6,9 @@ import { cn } from '@/lib/cn'
 import { useRouter } from 'next/navigation'
 import { useClerk } from '@clerk/nextjs'
 import { BasicDropdown } from '../dropdown'
-import type { Profile } from '@/lib/xata/users'
+
 import useCookie from '@/hooks/useCookie'
+import type { Profile } from '@prisma/client'
 
 export default function ProfileMenu({ profileSsr }: { profileSsr: Profile }) {
   const [open, setOpen] = useState(false)

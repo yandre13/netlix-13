@@ -3,7 +3,7 @@ import Image from 'next/image'
 import { Button } from './ui/button'
 import { ChevronDown, Search, Bell } from 'lucide-react'
 import { cookies } from 'next/headers'
-import { Profile } from '@/lib/xata/users'
+import { Profile } from '@prisma/client'
 import ProfileMenu from './client/profile-menu'
 
 const items = [

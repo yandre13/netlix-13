@@ -1,6 +1,7 @@
-import { Profile, getProfiles } from '@/lib/xata/users'
 import { headers } from 'next/headers'
 import ProfileButton from '../client/profile-button'
+import { getProfiles } from '@/lib/prisma/user'
+import { getFavoriteMovies } from '@/lib/prisma/favoritesMovies'
 
 async function getMyProfiles() {
   const headersList = headers()
@@ -8,7 +9,7 @@ async function getMyProfiles() {
   // console.log({ userId })
   const data = await getProfiles(userId)
   // console.log({ data })
-  return data as Profile[]
+  return data
 }
 
 const Profiles = async function Profiles() {
@@ -16,6 +17,7 @@ const Profiles = async function Profiles() {
   // const setProfile = useSetAtom(profileAtom)
   // const router = useRouter()
   const data = await getMyProfiles()
+  // const favs = getFavoriteMovies() // when changing profile wont work, I prefer to use CSR
   console.log({ daa: data })
 
   return (

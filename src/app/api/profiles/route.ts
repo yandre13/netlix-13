@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getProfiles } from '@/lib/xata/users'
 
 export async function GET(req: NextRequest) {
   // get userId from params
@@ -14,11 +13,11 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const profiles = await getProfiles(userId)
+    // const profiles = await getProfiles(userId)
 
     return NextResponse.json({
       status: 200,
-      data: profiles,
+      data: 'profiles',
     })
   } catch (error) {
     console.log({ error })

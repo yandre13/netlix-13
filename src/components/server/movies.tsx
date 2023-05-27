@@ -1,20 +1,19 @@
-import { db } from '@/lib/xata/db'
-import { Movie } from '@/lib/xata/movies'
 import MoviesList from '../client/movies-list'
+import { getMovies } from '@/lib/prisma/movie'
 
-async function getMovies() {
+async function getMoviesServer() {
   // await 3s
-  await new Promise((resolve) => setTimeout(resolve, 3000))
-  const data = await db.movies.getAll()
-  return data as Movie[]
+
+  const data = await getMovies()
+  return data
 }
 
 const Movies = async function Movies() {
-  const data = await getMovies()
+  const data = await getMoviesServer()
 
   return (
-    <div className="py-20">
-      <MoviesList moviesStr={JSON.stringify(data)} />
+    <div className="py-8">
+      <MoviesList moviesJson={JSON.stringify(data)} />
     </div>
   )
 } as unknown as () => JSX.Element

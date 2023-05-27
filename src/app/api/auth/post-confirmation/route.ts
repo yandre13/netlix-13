@@ -1,6 +1,6 @@
+import { prismaDb } from '@/lib/prisma'
 import { WebhookEvent } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
-import { createProfile, createUser } from '@/lib/xata/users'
 
 // create user
 export async function POST(req: NextRequest) {
@@ -26,18 +26,24 @@ export async function POST(req: NextRequest) {
     const name = last_name ? `${first_name} ${last_name}` : first_name
 
     try {
-      const newUser = await createUser(id, {
-        name,
-        email: email_address,
-        username,
-        picture: image_url,
+      const newUser = await prismaDb.user.create({
+        data: {
+          id,
+          name,
+          email: email_address,
+          username,
+          picture: image_url,
+          profiles: {
+            create: {
+              name: username,
+              picture:
+                'https://dr66lyt7li8ja.cloudfront.net/public/profile-blue.png',
+            },
+          },
+        },
       })
-      // console.log({ newUser })
 
-      const newProfile = await createProfile(newUser.id, {
-        name: newUser?.username || newUser?.name,
-        picture: newUser?.picture || '',
-      })
+      // console.log({ newUser })
 
       // console.log({ newProfile })
 
@@ -46,7 +52,6 @@ export async function POST(req: NextRequest) {
         message: 'User created successfully',
         data: {
           user: newUser,
-          profile: newProfile,
         },
       })
     } catch (error) {

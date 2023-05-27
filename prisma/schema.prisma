@@ -1,54 +1,94 @@
-// // This is your Prisma schema file,
-// // learn more about it in the docs: https://pris.ly/d/prisma-schema
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// datasource db {
-//   provider = "mysql"
-//   url      = env("DATABASE_URL")
-//   relationMode = "prisma"
-// }
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+  relationMode = "prisma"
+}
 
-// generator client {
-//   provider = "prisma-client-js"
-// }
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["jsonProtocol"]
+}
 
 
-// model User {
-//   id         String   @id
-//   createdAt  DateTime @default(now())
-//   updatedAt  DateTime? @updatedAt
-//   email      String   @unique
-//   name       String
-//   username   String?
-//   picture    String?
-// }
+model User {
+  id         String @id
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime? @updatedAt
+  email      String   @unique
+  name       String
+  username   String?
+  picture    String?
 
-// model Movie {
-//   id          String   @id
-//   createdAt   DateTime @default(now())
-//   updatedAt   DateTime? @updatedAt
-//   title       String
-//   description String?
-//   poster      String?
-//   releaseDate DateTime?
-//   rating      Float?
-//   genres      String[]
-//   actors      String[]
-//   directors   String[]
-//   writers     String[]
-//   runtime     Int?
-//   trailer     String?
-//   reviews     Review[]
-// }
+  // User can have many profiles
+  profiles   Profile[]
+}
 
-// model Review {
-//   id        String   @id
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime? @updatedAt
-//   author    User     @relation(fields: [authorId], references: [id])
-//   authorId  String
-//   movie     Movie    @relation(fields: [movieId], references: [id])
-//   movieId   String
-//   rating    Float
-//   content   String
-// }
-// ```
+model Profile {
+  id         String @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime? @updatedAt
+  name       String
+  picture    String
+  userId     String
+  user       User @relation(fields: [userId], references: [id])
+  @@index([userId])
+  // Profile can have many favorites
+  favorites  FavoritesMovies[]
+  // Profile can have many reviews
+  reviews    Review[]
+}
+
+model Movie {
+  id          String @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime? @updatedAt
+  title       String
+  description String
+  posterUrl   String
+  releaseDate String
+  rating      Float?
+  duration    String
+  genres      String[]
+  actors      String[]
+  directors   String[]
+  writers     String[]
+  runtime     Int?
+  trailerUrl  String
+  reviews     Review[]
+  // Movie can have many favorites
+  favorites   FavoritesMovies[]
+}
+
+model Review {
+  id          String @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime? @updatedAt
+  title       String
+  content     String
+  rating      Int
+  movieId     String
+  movie       Movie @relation(fields: [movieId], references: [id])
+  authorId      String
+  author      Profile @relation(fields: [authorId], references: [id])
+
+  @@index([movieId])
+  @@index([authorId])
+
+}
+
+model FavoritesMovies {
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime? @updatedAt
+  profileId   String
+  profile     Profile @relation(fields: [profileId], references: [id])
+  movieId     String
+  movie       Movie @relation(fields: [movieId], references: [id])
+
+  @@index([profileId])
+  @@index([movieId])
+  @@id([profileId, movieId])
+}

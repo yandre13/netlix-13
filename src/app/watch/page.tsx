@@ -2,11 +2,11 @@ import Movies from '@/components/server/movies'
 import Navbar from '@/components/navbar'
 import Spinner from '@/components/spinner'
 import { Button } from '@/components/ui/button'
-import { getRandomMovie } from '@/lib/xata/movies'
-
 import { Info } from 'lucide-react'
-import Image from 'next/image'
 import { Suspense } from 'react'
+import { getRandomMovie } from '@/lib/prisma/movie'
+import FavoritesList from '@/components/client/favorites-list'
+// import { ModalInfo } from '@/components/carousel'
 
 export default async function Watch() {
   const movie = await getRandomMovie()
@@ -21,8 +21,8 @@ export default async function Watch() {
           autoPlay
           muted
           loop
-          poster={movie.poster_url || ''}
-          src={movie.trailer_url || ''}
+          poster={movie.posterUrl}
+          src={movie.trailerUrl}
           // controls
           className="aspect-video w-full object-cover brightness-50"
         />
@@ -51,7 +51,31 @@ export default async function Watch() {
         <Suspense fallback={<Spinner />}>
           <Movies />
         </Suspense>
+        <Suspense fallback={<Spinner />}>
+          <FavoritesList />
+        </Suspense>
       </section>
+      {/* <ModalCard /> */}
+      <div className="py-20">
+        <br />
+        <br />
+        <br />
+      </div>
+      <div className="py-20">
+        <br />
+        <br />
+        <br />
+      </div>
+      <div className="py-20">
+        <br />
+        <br />
+        <br />
+      </div>
+      <div className="py-20">
+        <br />
+        <br />
+        <br />
+      </div>
     </main>
   )
 }

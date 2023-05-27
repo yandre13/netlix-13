@@ -1,6 +1,6 @@
 'use client'
 import useCookie from '@/hooks/useCookie'
-import type { Profile } from '@/lib/xata/users'
+import { Profile } from '@prisma/client'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
