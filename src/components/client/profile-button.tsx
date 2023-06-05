@@ -33,7 +33,7 @@ export default function ProfileButton({
         alt={name}
         width={200}
         height={200}
-        className="h-44 w-44 rounded-md border-2 border-transparent object-cover"
+        className="h-28 w-28 rounded-md border-2 border-transparent object-cover lg:h-44 lg:w-44"
       />
     </button>
   )

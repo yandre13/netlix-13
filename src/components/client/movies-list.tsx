@@ -16,18 +16,12 @@ export default function MoviesList({ moviesJson }: { moviesJson: string }) {
     suspense: false,
   })
 
-  const carouselMovies = myMovies?.map((movie) => {
-    const isFavorite = myFavs?.some(
-      (favoriteMovie) => favoriteMovie.id === movie.id
-    )
-
-    return { ...movie, isFavorite }
-  })
-
   return (
     <div className="py-8">
-      <h1 className="mb-6 text-2xl font-semibold">Trending movies 🔥</h1>
-      <Carousel movies={carouselMovies ?? myMovies ?? []} />
+      <h1 className="container mb-6 text-2xl font-semibold">
+        Trending movies 🔥
+      </h1>
+      <Carousel movies={myMovies ?? []} />
     </div>
   )
 }

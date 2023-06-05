@@ -1,338 +1,277 @@
 'use client'
 
-import { motion, useAnimate } from 'framer-motion'
+import { animate } from 'framer-motion'
 import Image from 'next/image'
 
 import { Splide, SplideSlide } from '@splidejs/react-splide'
 // Default theme
 import '@splidejs/react-splide/css'
-import { ArrowDown, Play, Plus, X } from 'lucide-react'
-import { Movie } from '@prisma/client'
+import { ChevronDown, Play, Plus, X } from 'lucide-react'
+import { memo, useId, useRef, useState } from 'react'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { openModalAtom } from '@/utils/atoms'
 import useAddFavorite from '@/hooks/mutations/useAddFavorite'
 import useRemoveFavorite from '@/hooks/mutations/useRemoveFavorite'
-import { useRef } from 'react'
-import { useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { modalMovieAtom } from '@/utils/atoms'
+import { cn } from '@/lib/cn'
+import useMediaQuery from '@/hooks/useMediaQuery'
 
-function generateLastSelector(
-  max: number,
-  baseSelector: string,
-  selector: string
-) {
-  let result = baseSelector
+import Overlay from './overlay'
+import { MovieWithFavorite } from '@/lib/prisma/movie'
+import { MAX_PER_VIEW, useAnimateCard } from '@/hooks/useAnimateCard'
 
-  Array.from({ length: max - 1 }).forEach(() => {
-    result += ` + ${selector}`
-  })
-
-  return result
-}
 const currentYear = new Date().getFullYear()
 
-const MAX_PER_VIEW = 4
-
-type MovieWithFavorite = Movie & { isFavorite?: boolean }
-
 export default function Carousel({ movies }: { movies: MovieWithFavorite[] }) {
-  const [scope, animate] = useAnimate()
   const splideRef = useRef(null)
   const { mutate: mutateAdd, error: errorAdd } = useAddFavorite()
   const { mutate: mutateRemove, error: errorRemove } = useRemoveFavorite()
-  const modalMovie = useAtomValue(modalMovieAtom)
-  // @ts-ignore
-  const parent = splideRef.current?.splideRef?.current
 
-  const handleHover = (id: string) => {
-    if (parent) animate(parent, { zIndex: 10 }, { duration: 0 })
-    const animationCard = animate(
-      `#${id}`,
-      {
-        scale: 1.4,
-        zIndex: 10,
-      },
-      { duration: 0.4, delay: 1 }
-    )
-    if (modalMovie?.id) {
-      console.log('stoped')
-      animate(
-        `#${id}`,
-        {
-          scale: 1.8,
-          zIndex: 10,
-        },
-        { duration: 0.4, delay: 0 }
-      )
-    }
-    animate(
-      `#${id} .Info`,
-      {
-        display: 'flex',
-      },
-      { duration: 0, delay: 1 }
-    )
-    animate(`#${id} .Info`, { opacity: 1 }, { duration: 0.4, delay: 1 })
-  }
-  const handleLeave = (id: string) => {
-    if (!modalMovie?.id) {
-      animate(
-        `#${id}`,
-        {
-          scale: 1,
-          zIndex: 0,
-        },
-        { duration: 0.3 }
-      )
-      animate(
-        `#${id} .Info`,
-        {
-          opacity: 0,
-        },
-        { duration: 0.3 }
-      )
-      animate(
-        `#${id} .Info`,
-        {
-          display: 'none',
-        },
-        { duration: 0, delay: 0.3 }
-      )
-      if (parent) animate(parent, { zIndex: 0 }, { duration: 0, delay: 0.3 })
-    }
-  }
+  const isLg = useMediaQuery('(min-width: 992px)')
+  const isXl = useMediaQuery('(min-width: 1280px)')
 
-  const handleOpenModal = (id: string) => {
-    // const top = parent.getBoundingClientRect().top
-    // animate(
-    //   `#${id}-container`,
-    //   {
-    //     position: 'fixed',
-    //     top: `-${top}px`,
-    //     left: '0',
-    //     height: '100vh',
-    //     width: '100%',
-    //     display: 'flex',
-    //     alignItems: 'center',
-    //     justifyContent: 'center',
-    //   },
-    //   { duration: 0 }
-    // )
-    // animate(
-    //   `#${id}`,
-    //   {
-    //     scale: 2,
-    //     // zIndex: 10,
-    //     backgroundColor: 'red',
-    //   },
-    //   { duration: 0.4 }
-    // )
-    // animate(
-    //   `#${id} .Info`,
-    //   {
-    //     display: 'flex',
-    //   },
-    //   { duration: 0, delay: 1 }
-    // )
-    // animate(`#${id} .Info`, { opacity: 1 }, { duration: 0 })
-  }
-
+  const gap = isXl ? 32 : isLg ? 20 : 16
   if (movies.length < 1) return null
   return (
-    <div className="flex gap-5 pb-16" ref={scope}>
+    <div className="flex gap-5 pb-16">
       <Splide
         options={{
-          perPage: MAX_PER_VIEW,
-          perMove: 2,
-          gap: '1rem',
           pagination: false,
-          height: 118,
+          arrows: false,
+          perMove: 2,
+          perPage: MAX_PER_VIEW,
+          gap,
+          autoWidth: !isLg,
+          padding: isLg ? 0 : 16,
+          speed: 700,
+          height: 120,
         }}
+        className="w-full cursor-move lg:container"
         ref={splideRef}
-        // onMounted={async () => {
-        //   //wait 2 seconds
-        //   await new Promise((resolve) => setTimeout(resolve, 2000))
-        //   handleHover(`card-1`)
-        // }}
       >
         {movies.map((movie, index) => {
           return (
-            <SplideSlide key={index}>
+            <SplideSlide key={index} className="min-w-[300px]">
               <CardCarousel
                 movie={movie}
-                id={`card-${index + 1}`}
                 mutateAdd={mutateAdd}
                 mutateRemove={mutateRemove}
-                handleHover={handleHover}
-                handleLeave={handleLeave}
-                handleOpenModal={handleOpenModal}
               />
             </SplideSlide>
           )
         })}
+        <Overlay />
       </Splide>
     </div>
   )
 }
 
-function calculateTranslateX(element: HTMLElement | null) {
-  if (!element) return 0
-  const windowWidth = window.innerWidth
-  const elementWidth = element?.getBoundingClientRect().width
-  const offsetLeft = element?.getBoundingClientRect().left
-  const translateX = windowWidth / 2 - elementWidth / 2 - offsetLeft
-
-  return Math.round(translateX)
-}
-
-const selector = '.splide__slide'
-const baseSelector = `${selector}.is-active`
-const lastSelector = generateLastSelector(MAX_PER_VIEW, baseSelector, selector)
-function CardCarousel({
+function CardCarouselM({
   movie,
-  id,
   mutateAdd,
   mutateRemove,
-  handleHover,
-  handleLeave,
-  handleOpenModal,
 }: {
   movie: MovieWithFavorite
-  id: string
   mutateAdd: (id: string) => void
   mutateRemove: (id: string) => void
-  handleHover: (id: string) => void
-  handleLeave: (id: string) => void
-  handleOpenModal: (id: string) => void
 }) {
-  const cardRef = useRef(null)
-  const [modalMovie, setModalMovie] = useAtom(modalMovieAtom)
+  const cardRef = useRef<HTMLDivElement | null>(null)
 
-  const isFirst =
-    cardRef.current ===
-    (typeof document !== 'undefined'
-      ? document?.querySelector(baseSelector)?.firstElementChild
-          ?.firstElementChild
-      : false)
-  const isLast =
-    cardRef.current ===
-    (typeof document !== 'undefined'
-      ? document?.querySelector(lastSelector)?.firstElementChild
-          ?.firstElementChild
-      : false)
+  const id = useId()
+  const [open, setOpen] = useState(false)
+  const setOpenModal = useSetAtom(openModalAtom)
+  const { handleCardHover, handleCardLeave, handleCardOpen, handleCardClose } =
+    useAnimateCard({
+      elementRef: cardRef.current,
+      open,
+      onClose: () => {
+        setOpen(false)
+        setOpenModal(false)
+      },
+      sizes: {
+        open: {
+          maxWidth: 600,
+          maxHeight: 600,
+        },
+        close: {
+          maxWidth: 300,
+          maxHeight: 300,
+        },
+      },
+    })
 
-  const origin = isFirst ? 'left' : isLast ? 'right' : 'center'
-  const handleCardHover = () => {
-    handleHover(id)
-  }
-  const handleCardLeave = () => {
-    handleLeave(id)
-  }
-
-  console.log('render', modalMovie)
+  console.log('movie', open)
 
   return (
-    <motion.div
-      className="CardContainer"
-      id={`${id}-container`}
-      animate={{
-        transform:
-          modalMovie?.id === movie.id
-            ? `translateX(${calculateTranslateX(cardRef.current)}px)`
-            : 'none',
-        // position: modalMovie?.id === movie.id ? 'fixed' : 'static',
-        // width: modalMovie?.id === movie.id ? '100%' : 'auto',
-        // display: modalMovie?.id === movie.id ? 'flex' : 'block',
-        // alignItems: modalMovie?.id === movie.id ? 'center' : '',
-        // justifyContent: modalMovie?.id === movie.id ? 'center' : '',
-        // left: modalMovie?.id === movie.id ? '0' : '',
-      }}
-      transition={{
-        duration: 0.4,
-      }}
+    <div
+      className="CardContainer 
+          h-screen max-h-screen w-full max-w-[300px]
+          lg:h-auto lg:max-h-none"
+      id={id}
+      ref={cardRef}
     >
-      <motion.div
-        className="overflow-hidden rounded-lg"
-        id={id}
-        ref={cardRef}
+      <div
+        className={cn(
+          'no-scrollbar Child overflow-hidden rounded-lg lg:max-h-[590px]',
+          open && 'overflow-auto'
+        )}
         onMouseOver={handleCardHover}
         onMouseLeave={handleCardLeave}
-        animate={{
-          scale: modalMovie?.id === movie.id ? 1.6 : 1,
-        }}
-        style={{
-          scale: modalMovie?.id === movie.id ? 1.6 : 1,
-          transformOrigin: modalMovie?.id === movie.id ? 'center' : origin,
-        }}
       >
-        <Image
-          src={movie.posterUrl}
-          alt={movie.title}
-          width={280}
-          height={200}
-          className="aspect-video w-full"
-        />
-
-        <div className="Info hidden flex-col gap-2 bg-zinc-800 p-3 opacity-0">
-          <ul className="flex gap-3">
-            <li>
-              <button className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-200">
-                <Play className="h-4 w-4 fill-black stroke-black pl-0.5" />
-              </button>
-            </li>
-            <li>
-              <button
-                className="flex h-6 w-6 items-center justify-center rounded-full ring-1 ring-white"
-                onClick={(e) => {
-                  e.preventDefault()
-                  if (!movie.isFavorite) {
-                    mutateAdd(movie.id)
-                  } else {
-                    mutateRemove(movie.id)
-                  }
-                }}
-              >
-                {movie?.isFavorite ? (
-                  <X className="h-4 w-4" />
-                ) : (
-                  <Plus className="h-4 w-4 fill-white" />
-                )}
-              </button>
-            </li>
-            <li>
-              <button
-                className="flex h-6 w-6 items-center justify-center rounded-full ring-1 ring-white"
-                onClick={(e) => {
-                  e.preventDefault()
-                  setModalMovie(movie)
-                  handleOpenModal(id)
-                  const translateX = calculateTranslateX(cardRef.current)
-                  console.log(translateX)
-                }}
-              >
-                <ArrowDown className="h-4 w-4 fill-white" />
-              </button>
-            </li>
-          </ul>
-          <p
-            className="mt-1 text-xs"
-            dangerouslySetInnerHTML={{
-              __html: movie.releaseDate?.includes(`${currentYear}`)
-                ? `<span class="text-orange-500 font-semibold">New</span> • ${movie.releaseDate}`
-                : `${movie.releaseDate}`,
-            }}
+        <div className="flex justify-end">
+          <div
+            className={cn(
+              'absolute top-0 m-2 flex h-6 w-6 transition-opacity',
+              open ? 'opacity-100' : 'opacity-0'
+            )}
+          >
+            <button
+              className="flex w-full items-center justify-center rounded-full bg-zinc-800 ring-1 ring-white"
+              onClick={handleCardClose}
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+          <Image
+            src={movie.posterUrl}
+            alt={movie.title}
+            width={280}
+            height={200}
+            className="aspect-video w-full"
           />
-          <p>
-            {movie.genres.map((genre, index) => {
-              return (
-                <span key={index} className="text-xs">
-                  {genre}
-                  {index + 1 !== movie.genres.length && ', '}
-                </span>
-              )
-            })}
-          </p>
-          <p className="text-xs">{movie.duration}</p>
         </div>
-      </motion.div>
-    </motion.div>
+
+        <div className="Info max-h-0 opacity-0">
+          <div className="flex w-full flex-col gap-2 bg-zinc-800 p-4">
+            <ul className="flex gap-3">
+              <li>
+                <button
+                  className={cn(
+                    'flex h-6 w-6 items-center justify-center rounded-full bg-slate-200 transition-all duration-500',
+                    open && 'h-8 w-8'
+                  )}
+                >
+                  <Play
+                    className={cn(
+                      'h-4 w-4 fill-black stroke-black pl-0.5 transition-all duration-500',
+                      open && 'h-6 w-6'
+                    )}
+                  />
+                </button>
+              </li>
+              <li>
+                <button
+                  className={cn(
+                    'flex h-6 w-6 items-center justify-center rounded-full ring-1 ring-white transition-all duration-500',
+                    open && 'h-8 w-8'
+                  )}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    if (!movie.isFavorite) {
+                      mutateAdd(movie.id)
+                    } else {
+                      mutateRemove(movie.id)
+                    }
+                  }}
+                >
+                  {movie?.isFavorite ? (
+                    <X
+                      className={cn(
+                        'h-4 w-4 transition-all duration-200',
+                        open && 'h-6 w-6'
+                      )}
+                    />
+                  ) : (
+                    <Plus
+                      className={cn(
+                        'h-4 w-4 fill-white transition-all duration-200',
+                        open && 'h-6 w-6'
+                      )}
+                    />
+                  )}
+                </button>
+              </li>
+              <li
+                className={cn(
+                  'ml-auto transition-all duration-200',
+                  open
+                    ? 'pointer-events-none invisible opacity-0'
+                    : 'pointer-events-auto visible opacity-100'
+                )}
+              >
+                <button
+                  className="flex h-6 w-6 items-center justify-center"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setOpen(true)
+                    setOpenModal(true)
+                    handleCardOpen()
+                  }}
+                >
+                  <ChevronDown className="h-4 w-4 " />
+                </button>
+              </li>
+            </ul>
+            <div className="flex flex-col gap-1 lg:gap-2 [&>p>span]:font-bold">
+              <h4
+                className={cn(
+                  'mt-1 font-semibold transition-all duration-500',
+                  open && 'text-xl lg:text-2xl'
+                )}
+              >
+                {movie.title}
+              </h4>
+              <p
+                className={cn(
+                  'text-xs transition-all duration-500',
+                  open && 'text-base'
+                )}
+                dangerouslySetInnerHTML={{
+                  __html: movie.releaseDate?.includes(`${currentYear}`)
+                    ? `<span class="text-orange-500 font-semibold">New</span> • ${movie.releaseDate}`
+                    : `${movie.releaseDate}`,
+                }}
+              />
+
+              {open && (
+                <div className="TextInfo flex flex-col gap-1 lg:gap-2 [&>p>span]:font-bold">
+                  <p>
+                    <span>Synopsis:</span> {movie.description}
+                  </p>
+                  <p>
+                    <span>Duration:</span> {movie.duration}
+                  </p>
+                  <p>
+                    <span>Genres:</span>{' '}
+                    {movie.genres.map((genre, index) => {
+                      return `${genre}${
+                        index + 1 !== movie.genres.length && ', '
+                      }`
+                    })}
+                  </p>
+
+                  <p>
+                    <span>Cast:</span>{' '}
+                    {movie.actors.map((actor, index) => {
+                      return `${actor}${
+                        index + 1 !== movie.actors.length && ', '
+                      }`
+                    })}
+                  </p>
+                  <p>
+                    <span>Rating:</span> {movie.rating || 0}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* <div
+        className="Overlay fixed left-0 top-0 -z-10 h-full w-full bg-black bg-opacity-50 opacity-0"
+        onClick={() => handleCardClose(id)}
+      /> */}
+    </div>
   )
 }
+
+const CardCarousel = memo(CardCarouselM)

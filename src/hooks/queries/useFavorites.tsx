@@ -1,4 +1,5 @@
-import { Movie } from '@prisma/client'
+import { MovieWithFavorite } from '@/lib/prisma/movie'
+
 import { useQuery } from '@tanstack/react-query'
 
 async function getFavorites(profileId: string) {
@@ -7,7 +8,7 @@ async function getFavorites(profileId: string) {
   )
   const { data } = await res.json()
 
-  return data as Movie[]
+  return data as MovieWithFavorite[]
 }
 
 export default function useFavorites({
@@ -19,7 +20,7 @@ export default function useFavorites({
   initialData?: any
   suspense?: boolean
 }) {
-  const result = useQuery<Movie[]>({
+  const result = useQuery<MovieWithFavorite[]>({
     queryKey: ['favorites', profileId],
     queryFn: () => getFavorites(profileId),
     initialData,

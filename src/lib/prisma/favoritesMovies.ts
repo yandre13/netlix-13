@@ -24,7 +24,10 @@ export const getFavoriteMovies = async (profileId: string) => {
     },
   })
 
-  const favorites = favoriteMovies?.favorites.map((favorite) => favorite.movie)
+  const favorites = favoriteMovies?.favorites.map((favorite) => ({
+    isFavorite: true,
+    ...favorite.movie,
+  }))
 
   return favorites || []
 }
@@ -54,4 +57,15 @@ export const removeFavoriteMovie = async (
   })
 
   return deletedFavoriteMovie || null
+}
+
+export const isFavoriteMovie = async (profileId: string, movieId: string) => {
+  const favorite = await prismaDb.favoritesMovies.findFirst({
+    where: {
+      profileId,
+      movieId,
+    },
+  })
+
+  return !!favorite
 }

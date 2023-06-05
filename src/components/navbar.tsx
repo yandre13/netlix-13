@@ -39,7 +39,7 @@ export default function Navbar() {
   return (
     <>
       <header className="fixed inset-x-0 top-0 z-50">
-        <section className="container flex h-[88px] items-center gap-6 py-2 lg:gap-8">
+        <section className="container flex h-14 items-center py-2 lg:h-[88px] lg:gap-8">
           <div>
             <Image
               src={images.logo}

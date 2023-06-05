@@ -21,7 +21,7 @@ const Profiles = async function Profiles() {
   console.log({ daa: data })
 
   return (
-    <div className="mt-10 flex items-center justify-center gap-10">
+    <div className="mt-8 flex flex-wrap items-center justify-center gap-4 lg:mt-12 lg:gap-8">
       {data.map((profile) => (
         <div
           key={profile.id}
