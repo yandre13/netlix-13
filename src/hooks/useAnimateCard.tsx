@@ -10,7 +10,7 @@ import {
 } from '@/utils/carousel'
 import { animate } from 'framer-motion'
 
-export const MAX_PER_VIEW = 4
+export const MAX_PER_VIEW = 5
 
 const selector = '.splide__slide'
 const baseSelector = `${selector}.is-active`

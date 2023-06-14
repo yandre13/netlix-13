@@ -6,9 +6,7 @@ import { getFavoriteMovies } from '@/lib/prisma/favoritesMovies'
 async function getMyProfiles() {
   const headersList = headers()
   const userId = JSON.parse(headersList.get('x-user')!) //middleware will set this header
-  // console.log({ userId })
   const data = await getProfiles(userId)
-  // console.log({ data })
   return data
 }
 
@@ -18,7 +16,6 @@ const Profiles = async function Profiles() {
   // const router = useRouter()
   const data = await getMyProfiles()
   // const favs = getFavoriteMovies() // when changing profile wont work, I prefer to use CSR
-  console.log({ daa: data })
 
   return (
     <div className="mt-8 flex flex-wrap items-center justify-center gap-4 lg:mt-12 lg:gap-8">

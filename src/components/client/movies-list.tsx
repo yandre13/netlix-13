@@ -14,8 +14,6 @@ export default function MoviesList({ moviesJson }: { moviesJson: string }) {
     revalidateOnMounted: true,
   })
 
-  console.log('myFavs', myMovies)
-
   return (
     <div className="mt-4 py-8">
       <h1 className="container mb-6 text-xl font-semibold lg:text-2xl">

@@ -22,7 +22,6 @@ export default authMiddleware({
 
     req.headers.set('x-user', JSON.stringify(auth.userId))
     const userProfile = req.cookies.get('my-profile')
-    console.log('userProfile', userProfile?.value)
     if (!userProfile && req.nextUrl.pathname === '/watch') {
       const url = req.nextUrl.clone()
       url.pathname = '/profiles'

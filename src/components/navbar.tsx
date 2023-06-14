@@ -36,7 +36,6 @@ export default function Navbar() {
   const cookiesList = cookies()
   const profile: Profile = JSON.parse(cookiesList.get('my-profile')?.value!) //middleware will set this cookie
 
-  // console.log('Servers', profile.name)
   return (
     <>
       <header

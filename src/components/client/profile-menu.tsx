@@ -29,16 +29,9 @@ export default function ProfileMenu({ profileSsr }: { profileSsr: Profile }) {
   }
   const onOpenChange = () => setOpen(!open)
 
-  // useEffect(() => {
-  // read from cookies
   if (!profile) {
-    // router.push('/profiles') //handle this in middleware
     return null
   }
-  // }, [router, profile])
-
-  // if (!profile) return null
-  // console.log('Clients', profile.name)
 
   return (
     <div className="relative overflow-hidden">

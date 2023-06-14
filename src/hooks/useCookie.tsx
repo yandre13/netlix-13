@@ -19,7 +19,6 @@ export default function useCookie<T = unknown>(key: string, initialValue?: T) {
 
   useEffect(() => {
     const item = Cookies.get(key)
-    // console.log({ item })
     if (item) {
       setValue(JSON.parse(item))
     }

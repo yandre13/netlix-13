@@ -20,7 +20,6 @@ export default function useRemoveFavorite() {
   const result = useMutation({
     mutationFn: (movieId: string) => removeFavorite(movieId),
     onSuccess: (data) => {
-      console.log('success', data)
       queryClient.invalidateQueries(['favorites', profile?.id!])
     },
   })
