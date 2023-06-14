@@ -5,6 +5,15 @@ export const getMovies = async () => {
   return movies
 }
 
+export const getMovieById = async (id: string) => {
+  const movie = await prismaDb.movie.findUnique({
+    where: {
+      id,
+    },
+  })
+  return movie
+}
+
 export const getRandomMovie = async () => {
   const movies = await prismaDb.movie.findMany()
   const randomMovie =

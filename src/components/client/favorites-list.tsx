@@ -11,13 +11,13 @@ export default function FavoritesList() {
   const { value: profile } = useCookie<Profile>('my-profile')
   const { data, error } = useFavorites({ profileId: profile?.id! })
 
-  console.log({ error, data })
-
   if (data?.length === 0) return null
 
   return (
     <div className="py-8">
-      <h1 className="mb-6 text-2xl font-semibold">My list ⭐</h1>
+      <h1 className="container mb-6 text-xl font-semibold lg:text-2xl">
+        My list ⭐
+      </h1>
       <Carousel movies={data || []} />
     </div>
   )

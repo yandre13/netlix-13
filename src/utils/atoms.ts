@@ -1,7 +1,6 @@
 // import { Profile } from '@/lib/xata/users'
 // import { atomWithLocalStorage } from '@/lib/jotai'
 
-import { MovieWithFavorite } from '@/lib/prisma/movie'
 import { Movie } from '@prisma/client'
 import { atom } from 'jotai'
 
@@ -9,4 +8,4 @@ import { atom } from 'jotai'
 
 export const openModalAtom = atom(false)
 
-export const movieAtom = atom<MovieWithFavorite | null>(null)
+export const movieAtom = atom<Movie | null>(null)

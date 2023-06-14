@@ -38,13 +38,15 @@ export function calculateTranslate(
 export function getSequenceOpen(
   id: string,
   { x, y }: { x: number; y: number },
-  maxWidth: number
+  maxWidth: number,
+  initialMax: number
 ) {
   const sequence = [
     [
       `#${id}`,
       {
         position: 'fixed',
+        maxWidth: `${initialMax}px`,
         zIndex: 100,
       },
       { duration: 0 },

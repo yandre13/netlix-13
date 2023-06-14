@@ -33,19 +33,17 @@ export function useAnimateCard({
   open,
   elementRef,
   onClose,
+  onOpen,
   sizes,
 }: {
   open: boolean
   elementRef: HTMLDivElement | null
-  onClose: () => void
+  onOpen?: () => void
+  onClose?: () => void
   sizes: {
     open: {
       maxWidth: number
       maxHeight: number
-    }
-    close: {
-      maxWidth: number
-      maxHeight?: number
     }
   }
 }) {
@@ -76,8 +74,16 @@ export function useAnimateCard({
 
   const handleCardOpen = useCallback(() => {
     if (!open && isMd) {
+      onOpen?.()
       const exes = calculateTranslate(elementRef, sizes.open)
-      const sequence = getSequenceOpen(newId, exes, sizes.open.maxWidth)
+      const parentLi = elementRef?.parentElement!
+      const maxWidth = parentLi.clientWidth - MAX_PER_VIEW
+      const sequence = getSequenceOpen(
+        newId,
+        exes,
+        sizes.open.maxWidth,
+        maxWidth
+      )
       // @ts-ignore
       animate(sequence)
     }
@@ -92,7 +98,9 @@ export function useAnimateCard({
     }
 
     if (open && isMd) {
-      const sequence = getSequenceClose(newId, sizes.close.maxWidth)
+      const parentLi = elementRef?.parentElement!
+      const maxWidth = parentLi.clientWidth - MAX_PER_VIEW
+      const sequence = getSequenceClose(newId, maxWidth)
       // @ts-ignore
       animate(sequence).then(() => {
         const sequence2 = [
@@ -109,7 +117,7 @@ export function useAnimateCard({
         animate(sequence2)
         // setOpen(false)
         // setOpenModal(false)
-        onClose()
+        onClose?.()
       })
     }
 

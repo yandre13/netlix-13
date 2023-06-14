@@ -3,17 +3,20 @@ import { Info } from 'lucide-react'
 import { Button } from './ui/button'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { movieAtom } from '@/utils/atoms'
-import { Movie } from '@prisma/client'
+import { Movie, Profile } from '@prisma/client'
 import Overlay from './overlay'
-import { useCallback, useEffect, useId, useState } from 'react'
+import { Suspense, useCallback, useEffect, useId, useState } from 'react'
 import useMediaQuery from '@/hooks/useMediaQuery'
 import { cn } from '@/lib/cn'
 import { Play, Plus, X } from 'lucide-react'
 import Image from 'next/image'
-import { MovieWithFavorite } from '@/lib/prisma/movie'
 import { AnimatePresence, animate, usePresence } from 'framer-motion'
 import useRemoveFavorite from '@/hooks/mutations/useRemoveFavorite'
 import useAddFavorite from '@/hooks/mutations/useAddFavorite'
+import useCookie from '@/hooks/useCookie'
+import useFavorites from '@/hooks/queries/useFavorites'
+import Spinner from './spinner'
+import Link from 'next/link'
 
 export function ButtonOpenModal({ movie }: { movie: Movie }) {
   const setMovie = useSetAtom(movieAtom)
@@ -23,8 +26,7 @@ export function ButtonOpenModal({ movie }: { movie: Movie }) {
       size="default"
       onClick={(e) => {
         e.preventDefault()
-        console.log('movie', movie)
-        setMovie({ isFavorite: false, ...movie })
+        setMovie(movie)
       }}
     >
       <Info className="mr-2 h-5 w-5" />
@@ -34,22 +36,53 @@ export function ButtonOpenModal({ movie }: { movie: Movie }) {
 }
 
 const currentYear = new Date().getFullYear()
-export function CardModal({ movie }: { movie: MovieWithFavorite }) {
+
+function FavoriteButton({ movie }: { movie: Movie }) {
+  const { value: profile } = useCookie<Profile>('my-profile')
+  const { data: myFavs } = useFavorites({
+    profileId: profile?.id!,
+  })
+  const { mutate: mutateAdd, error: errorAdd } = useAddFavorite()
+  const { mutate: mutateRemove, error: errorRemove } = useRemoveFavorite()
+  // validate if movie is in  myFavs
+  const isFavorite = myFavs?.some((fav) => fav.id === movie.id)
+
+  return (
+    <li>
+      <button
+        className="flex h-8 w-8 items-center justify-center rounded-full ring-1 ring-white"
+        onClick={(e) => {
+          e.preventDefault()
+          if (!isFavorite) {
+            mutateAdd(movie.id)
+          } else {
+            mutateRemove(movie.id)
+          }
+        }}
+      >
+        {isFavorite ? (
+          <X className="h-6 w-6" />
+        ) : (
+          <Plus className="h-6 w-6 fill-white" />
+        )}
+      </button>
+    </li>
+  )
+}
+
+export function CardModal({ movie }: { movie: Movie }) {
   const id = useId()
 
   // the id has : at the start and end, so we need to remove them
   const newId = id.replace(/:/g, '\\:')
-  const { mutate: mutateAdd, error: errorAdd } = useAddFavorite()
-  const { mutate: mutateRemove, error: errorRemove } = useRemoveFavorite()
   const [isPresent, safeToRemove] = usePresence()
-  // const [open, setOpen] = useState(false)
   const setMovie = useSetAtom(movieAtom)
 
   const isMd = useMediaQuery('(min-width: 768px)')
 
-  const handleCardClose = () => {
+  const handleCardClose = useCallback(() => {
     setMovie(null)
-  }
+  }, [setMovie])
 
   useEffect(() => {
     if (isPresent) {
@@ -102,6 +135,31 @@ export function CardModal({ movie }: { movie: MovieWithFavorite }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPresent, newId, isMd])
 
+  useEffect(() => {
+    function handleKeyPress(event: KeyboardEvent) {
+      if (event.key === 'Escape' && movie) {
+        handleCardClose()
+      }
+    }
+    document.addEventListener('keydown', handleKeyPress)
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress)
+    }
+  }, [handleCardClose, movie])
+
+  useEffect(() => {
+    const overlay = document.querySelector('#OverBanner') as HTMLElement
+    if (overlay && movie) {
+      overlay.addEventListener('click', handleCardClose)
+    }
+    return () => {
+      if (overlay) {
+        overlay.removeEventListener('click', handleCardClose)
+      }
+    }
+  }, [handleCardClose, movie])
+
   if (!movie) {
     return null
   }
@@ -139,29 +197,16 @@ export function CardModal({ movie }: { movie: MovieWithFavorite }) {
             <div className="flex w-full flex-col gap-2 bg-zinc-800 p-4 lg:gap-4">
               <ul className="flex gap-3 lg:mt-1">
                 <li>
-                  <button className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200">
-                    <Play className="h-6 w-6 fill-black stroke-black pl-0.5" />
-                  </button>
-                </li>
-                <li>
-                  <button
-                    className="flex h-8 w-8 items-center justify-center rounded-full ring-1 ring-white"
-                    onClick={(e) => {
-                      e.preventDefault()
-                      if (!movie.isFavorite) {
-                        mutateAdd(movie.id)
-                      } else {
-                        mutateRemove(movie.id)
-                      }
-                    }}
+                  <Link
+                    className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200"
+                    href={`/watch/movies/${movie.id}`}
                   >
-                    {movie?.isFavorite ? (
-                      <X className="h-6 w-6" />
-                    ) : (
-                      <Plus className="h-6 w-6 fill-white" />
-                    )}
-                  </button>
+                    <Play className="h-6 w-6 fill-black stroke-black pl-0.5" />
+                  </Link>
                 </li>
+                <Suspense fallback={<Spinner className="m-0.5" />}>
+                  <FavoriteButton movie={movie} />
+                </Suspense>
               </ul>
               <div className="flex flex-col gap-1 lg:gap-2 [&>p>span]:font-bold">
                 <h4 className="mt-1 text-xl font-semibold lg:text-2xl">

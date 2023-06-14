@@ -5,6 +5,7 @@ import { ChevronDown, Search, Bell } from 'lucide-react'
 import { cookies } from 'next/headers'
 import { Profile } from '@prisma/client'
 import ProfileMenu from './client/profile-menu'
+import NavbarListener from './client/navbar-listener'
 
 const items = [
   {
@@ -38,7 +39,10 @@ export default function Navbar() {
   // console.log('Servers', profile.name)
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-50">
+      <header
+        className="fixed inset-x-0 top-0 z-50 transition-all duration-300"
+        id="HeaderId"
+      >
         <section className="container flex h-14 items-center py-2 lg:h-[88px] lg:gap-8">
           <div>
             <Image
@@ -86,6 +90,7 @@ export default function Navbar() {
           </div>
         </section>
       </header>
+      <NavbarListener />
     </>
   )
 }

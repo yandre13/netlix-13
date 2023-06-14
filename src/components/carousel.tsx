@@ -1,14 +1,12 @@
 'use client'
-
-import { animate } from 'framer-motion'
 import Image from 'next/image'
 
 import { Splide, SplideSlide } from '@splidejs/react-splide'
 // Default theme
 import '@splidejs/react-splide/css'
 import { ChevronDown, Play, Plus, X } from 'lucide-react'
-import { memo, useId, useRef, useState } from 'react'
-import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { Suspense, memo, useId, useRef, useState } from 'react'
+import { useSetAtom } from 'jotai'
 import { openModalAtom } from '@/utils/atoms'
 import useAddFavorite from '@/hooks/mutations/useAddFavorite'
 import useRemoveFavorite from '@/hooks/mutations/useRemoveFavorite'
@@ -16,46 +14,45 @@ import { cn } from '@/lib/cn'
 import useMediaQuery from '@/hooks/useMediaQuery'
 
 import Overlay from './overlay'
-import { MovieWithFavorite } from '@/lib/prisma/movie'
 import { MAX_PER_VIEW, useAnimateCard } from '@/hooks/useAnimateCard'
+import Link from 'next/link'
+import useCookie from '@/hooks/useCookie'
+import useFavorites from '@/hooks/queries/useFavorites'
+import { Movie, Profile } from '@prisma/client'
+import Spinner from './spinner'
 
 const currentYear = new Date().getFullYear()
 
-export default function Carousel({ movies }: { movies: MovieWithFavorite[] }) {
+export default function Carousel({ movies }: { movies: Movie[] }) {
   const splideRef = useRef(null)
-  const { mutate: mutateAdd, error: errorAdd } = useAddFavorite()
-  const { mutate: mutateRemove, error: errorRemove } = useRemoveFavorite()
 
   const isLg = useMediaQuery('(min-width: 992px)')
   const isXl = useMediaQuery('(min-width: 1280px)')
 
   const gap = isXl ? 32 : isLg ? 20 : 16
+
   if (movies.length < 1) return null
+
   return (
-    <div className="flex gap-5 pb-16">
+    <div className="flex gap-5 lg:mb-10">
       <Splide
         options={{
           pagination: false,
           arrows: false,
-          perMove: 2,
-          perPage: MAX_PER_VIEW,
+          perMove: isLg ? 2 : 1,
+          perPage: isLg ? MAX_PER_VIEW : 2,
           gap,
-          autoWidth: !isLg,
           padding: isLg ? 0 : 16,
           speed: 700,
-          height: 120,
+          height: isLg ? 120 : 'auto',
         }}
         className="w-full cursor-move lg:container"
         ref={splideRef}
       >
         {movies.map((movie, index) => {
           return (
-            <SplideSlide key={index} className="min-w-[300px]">
-              <CardCarousel
-                movie={movie}
-                mutateAdd={mutateAdd}
-                mutateRemove={mutateRemove}
-              />
+            <SplideSlide key={index}>
+              <CardCarousel movie={movie} />
             </SplideSlide>
           )
         })}
@@ -65,15 +62,54 @@ export default function Carousel({ movies }: { movies: MovieWithFavorite[] }) {
   )
 }
 
-function CardCarouselM({
-  movie,
-  mutateAdd,
-  mutateRemove,
-}: {
-  movie: MovieWithFavorite
-  mutateAdd: (id: string) => void
-  mutateRemove: (id: string) => void
-}) {
+function FavoriteButton({ movie, open }: { movie: Movie; open: boolean }) {
+  const { value: profile } = useCookie<Profile>('my-profile')
+  const { data: myFavs } = useFavorites({
+    profileId: profile?.id!,
+  })
+  const { mutate: mutateAdd, error: errorAdd } = useAddFavorite()
+  const { mutate: mutateRemove, error: errorRemove } = useRemoveFavorite()
+  // validate if movie is in  myFavs
+  const isFavorite = myFavs?.some((fav) => fav.id === movie.id)
+
+  return (
+    <li>
+      <button
+        className={cn(
+          'flex h-6 w-6 items-center justify-center rounded-full ring-1 ring-white transition-all duration-500',
+          open && 'h-8 w-8'
+        )}
+        onClick={(e) => {
+          e.preventDefault()
+          if (!isFavorite) {
+            mutateAdd(movie.id)
+          } else {
+            mutateRemove(movie.id)
+          }
+        }}
+      >
+        {isFavorite && (
+          <X
+            className={cn(
+              'h-4 w-4 transition-all duration-200',
+              open && 'h-6 w-6'
+            )}
+          />
+        )}
+        {!isFavorite && (
+          <Plus
+            className={cn(
+              'h-4 w-4 fill-white transition-all duration-200',
+              open && 'h-6 w-6'
+            )}
+          />
+        )}
+      </button>
+    </li>
+  )
+}
+
+function CardCarouselM({ movie }: { movie: Movie }) {
   const cardRef = useRef<HTMLDivElement | null>(null)
 
   const id = useId()
@@ -92,20 +128,12 @@ function CardCarouselM({
           maxWidth: 600,
           maxHeight: 600,
         },
-        close: {
-          maxWidth: 300,
-          maxHeight: 300,
-        },
       },
     })
 
-  console.log('movie', open)
-
   return (
     <div
-      className="CardContainer 
-          h-screen max-h-screen w-full max-w-[300px]
-          lg:h-auto lg:max-h-none"
+      className="CardContainer w-full lg:h-auto lg:max-h-none"
       id={id}
       ref={cardRef}
     >
@@ -144,7 +172,8 @@ function CardCarouselM({
           <div className="flex w-full flex-col gap-2 bg-zinc-800 p-4">
             <ul className="flex gap-3">
               <li>
-                <button
+                <Link
+                  href={`/watch/movies/${movie.id}`}
                   className={cn(
                     'flex h-6 w-6 items-center justify-center rounded-full bg-slate-200 transition-all duration-500',
                     open && 'h-8 w-8'
@@ -156,40 +185,11 @@ function CardCarouselM({
                       open && 'h-6 w-6'
                     )}
                   />
-                </button>
+                </Link>
               </li>
-              <li>
-                <button
-                  className={cn(
-                    'flex h-6 w-6 items-center justify-center rounded-full ring-1 ring-white transition-all duration-500',
-                    open && 'h-8 w-8'
-                  )}
-                  onClick={(e) => {
-                    e.preventDefault()
-                    if (!movie.isFavorite) {
-                      mutateAdd(movie.id)
-                    } else {
-                      mutateRemove(movie.id)
-                    }
-                  }}
-                >
-                  {movie?.isFavorite ? (
-                    <X
-                      className={cn(
-                        'h-4 w-4 transition-all duration-200',
-                        open && 'h-6 w-6'
-                      )}
-                    />
-                  ) : (
-                    <Plus
-                      className={cn(
-                        'h-4 w-4 fill-white transition-all duration-200',
-                        open && 'h-6 w-6'
-                      )}
-                    />
-                  )}
-                </button>
-              </li>
+              <Suspense fallback={<Spinner className="m-0.5" />}>
+                <FavoriteButton movie={movie} open={open} />
+              </Suspense>
               <li
                 className={cn(
                   'ml-auto transition-all duration-200',
