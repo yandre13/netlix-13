@@ -18,12 +18,12 @@ import { MAX_PER_VIEW, useAnimateCard } from '@/hooks/useAnimateCard'
 import Link from 'next/link'
 import useCookie from '@/hooks/useCookie'
 import useFavorites from '@/hooks/queries/useFavorites'
-import { Movie, Profile } from '@prisma/client'
+import type { MovieProps, ProfileProps } from '@/db/schema'
 import Spinner from './spinner'
 
 const currentYear = new Date().getFullYear()
 
-export default function Carousel({ movies }: { movies: Movie[] }) {
+export default function Carousel({ movies }: { movies: MovieProps[] }) {
   const splideRef = useRef(null)
 
   const isLg = useMediaQuery('(min-width: 992px)')
@@ -62,8 +62,8 @@ export default function Carousel({ movies }: { movies: Movie[] }) {
   )
 }
 
-function FavoriteButton({ movie, open }: { movie: Movie; open: boolean }) {
-  const { value: profile } = useCookie<Profile>('my-profile')
+function FavoriteButton({ movie, open }: { movie: MovieProps; open: boolean }) {
+  const { value: profile } = useCookie<ProfileProps>('my-profile')
   const { data: myFavs } = useFavorites({
     profileId: profile?.id!,
   })
@@ -109,7 +109,7 @@ function FavoriteButton({ movie, open }: { movie: Movie; open: boolean }) {
   )
 }
 
-function CardCarouselM({ movie }: { movie: Movie }) {
+function CardCarouselM({ movie }: { movie: MovieProps }) {
   const cardRef = useRef<HTMLDivElement | null>(null)
 
   const id = useId()

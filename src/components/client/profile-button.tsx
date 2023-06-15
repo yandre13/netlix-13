@@ -1,6 +1,6 @@
 'use client'
 import useCookie from '@/hooks/useCookie'
-import { Profile } from '@prisma/client'
+import type { ProfileProps } from '@/db/schema'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
@@ -11,7 +11,7 @@ export default function ProfileButton({
 }: {
   picture: string
   name?: string
-  profile: Profile
+  profile: ProfileProps
 }) {
   const router = useRouter()
   const { write } = useCookie('my-profile')

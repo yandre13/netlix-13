@@ -8,13 +8,17 @@ import { useClerk } from '@clerk/nextjs'
 import { BasicDropdown } from '../dropdown'
 
 import useCookie from '@/hooks/useCookie'
-import type { Profile } from '@prisma/client'
+import type { ProfileProps } from '@/db/schema'
 
-export default function ProfileMenu({ profileSsr }: { profileSsr: Profile }) {
+export default function ProfileMenu({
+  profileSsr,
+}: {
+  profileSsr: ProfileProps
+}) {
   const [open, setOpen] = useState(false)
   const { signOut } = useClerk()
   const router = useRouter()
-  const { value: profile } = useCookie<Profile>('my-profile', profileSsr)
+  const { value: profile } = useCookie<ProfileProps>('my-profile', profileSsr)
 
   const menuItems = [
     {

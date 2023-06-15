@@ -1,0 +1,27 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1686785710447,
+      "tag": "0000_cuddly_old_lace",
+      "breakpoints": false
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1686789541377,
+      "tag": "0001_jazzy_tag",
+      "breakpoints": false
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1686789584947,
+      "tag": "0002_happy_captain_stacy",
+      "breakpoints": false
+    }
+  ]
+}

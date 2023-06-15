@@ -3,7 +3,7 @@ import {
   addFavoriteMovie,
   getFavoriteMovies,
   removeFavoriteMovie,
-} from '@/lib/prisma/favoritesMovies'
+} from '@/db/functions/favorites'
 import { NextRequest, NextResponse } from 'next/server'
 import { object, string, TypeOf } from 'zod'
 

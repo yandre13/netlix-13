@@ -1,5 +1,5 @@
-import { FavoritesMovies, Profile } from '@prisma/client'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import type { FavoriteProps, ProfileProps } from '@/db/schema'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import useCookie from '../useCookie'
 
 async function addFavorite(movieId: string) {
@@ -9,12 +9,12 @@ async function addFavorite(movieId: string) {
   })
   const { data } = await res.json()
 
-  return data as FavoritesMovies
+  return data as FavoriteProps
 }
 
 export default function useAddFavorite() {
   const queryClient = useQueryClient()
-  const { value: profile } = useCookie<Profile>('my-profile')
+  const { value: profile } = useCookie<ProfileProps>('my-profile')
   const result = useMutation({
     mutationFn: (movieId: string) => addFavorite(movieId),
     onSuccess: (data) => {

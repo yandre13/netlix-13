@@ -1,5 +1,4 @@
-import { getMovies } from '@/lib/prisma/movie'
-
+import { getMovies } from '@/db/functions/movies'
 import { NextResponse } from 'next/server'
 
 export async function GET() {

@@ -3,7 +3,7 @@ import { Info } from 'lucide-react'
 import { Button } from './ui/button'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { movieAtom } from '@/utils/atoms'
-import { Movie, Profile } from '@prisma/client'
+import type { MovieProps, ProfileProps } from '@/db/schema'
 import Overlay from './overlay'
 import { Suspense, useCallback, useEffect, useId, useState } from 'react'
 import useMediaQuery from '@/hooks/useMediaQuery'
@@ -18,7 +18,7 @@ import useFavorites from '@/hooks/queries/useFavorites'
 import Spinner from './spinner'
 import Link from 'next/link'
 
-export function ButtonOpenModal({ movie }: { movie: Movie }) {
+export function ButtonOpenModal({ movie }: { movie: MovieProps }) {
   const setMovie = useSetAtom(movieAtom)
   return (
     <Button
@@ -37,8 +37,8 @@ export function ButtonOpenModal({ movie }: { movie: Movie }) {
 
 const currentYear = new Date().getFullYear()
 
-function FavoriteButton({ movie }: { movie: Movie }) {
-  const { value: profile } = useCookie<Profile>('my-profile')
+function FavoriteButton({ movie }: { movie: MovieProps }) {
+  const { value: profile } = useCookie<ProfileProps>('my-profile')
   const { data: myFavs } = useFavorites({
     profileId: profile?.id!,
   })
@@ -70,7 +70,7 @@ function FavoriteButton({ movie }: { movie: Movie }) {
   )
 }
 
-export function CardModal({ movie }: { movie: Movie }) {
+export function CardModal({ movie }: { movie: MovieProps }) {
   const id = useId()
 
   // the id has : at the start and end, so we need to remove them
@@ -90,7 +90,6 @@ export function CardModal({ movie }: { movie: Movie }) {
         const offset = document.getElementById(newId)?.getBoundingClientRect()
         const x = offset?.left || 0
         const y = offset?.top || 0
-        console.log('offset', { x, y })
         const sequence = [
           [`#${newId}`, { zIndex: 100 }, { duration: 0 }],
           [
@@ -260,7 +259,6 @@ export function CardModal({ movie }: { movie: Movie }) {
 
 export function CardModalWrapper() {
   const movie = useAtomValue(movieAtom)
-  console.log('movie', { movie })
   return (
     <AnimatePresence>
       {movie?.id && <CardModal movie={movie} />}

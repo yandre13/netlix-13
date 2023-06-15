@@ -6,12 +6,15 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate": "drizzle-kit generate:pg",
+    "migrate": "tsx ./src/db/utils/migrate.ts",
+    "seed": "tsx ./src/db/utils/seed.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^4.17.3",
     "@clerk/themes": "^1.6.4",
-    "@prisma/client": "^4.14.1",
+    "@neondatabase/serverless": "^0.4.14",
     "@radix-ui/react-dropdown-menu": "^2.0.4",
     "@radix-ui/react-slot": "^1.0.1",
     "@splidejs/react-splide": "^0.7.12",
@@ -22,6 +25,7 @@
     "autoprefixer": "10.4.14",
     "class-variance-authority": "^0.6.0",
     "clsx": "^1.2.1",
+    "drizzle-orm": "^0.26.5",
     "eslint": "8.40.0",
     "eslint-config-next": "13.4.2",
     "framer-motion": "^10.12.12",
@@ -43,8 +47,11 @@
     "@tanstack/eslint-plugin-query": "^4.29.4",
     "@tanstack/react-query-devtools": "^4.29.6",
     "@types/js-cookie": "^3.0.3",
+    "dotenv": "^16.1.4",
+    "drizzle-kit": "^0.18.1",
+    "postgres": "^3.3.5",
     "prettier": "^2.8.8",
     "prettier-plugin-tailwindcss": "^0.2.8",
-    "prisma": "^4.14.1"
+    "tsx": "^3.12.7"
   }
 }

@@ -1,4 +1,4 @@
-import { getMovieById } from '@/lib/prisma/movie'
+import { getMovieById } from '@/db/functions/movies'
 import { ChevronLeft } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'

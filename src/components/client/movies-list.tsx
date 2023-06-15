@@ -1,9 +1,5 @@
 'use client'
-
-import useFavorites from '@/hooks/queries/useFavorites'
-import useCookie from '@/hooks/useCookie'
 // Default theme
-import { Profile } from '@prisma/client'
 import useMovies from '@/hooks/queries/useMovies'
 import Carousel from '../carousel'
 

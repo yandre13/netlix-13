@@ -1,4 +1,4 @@
-import { FavoritesMovies, Profile } from '@prisma/client'
+import type { FavoriteProps, ProfileProps } from '@/db/schema'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import useCookie from '../useCookie'
 
@@ -11,12 +11,12 @@ async function removeFavorite(movieId: string) {
   )
   const { data } = await res.json()
 
-  return data as FavoritesMovies
+  return data as FavoriteProps
 }
 
 export default function useRemoveFavorite() {
   const queryClient = useQueryClient()
-  const { value: profile } = useCookie<Profile>('my-profile')
+  const { value: profile } = useCookie<ProfileProps>('my-profile')
   const result = useMutation({
     mutationFn: (movieId: string) => removeFavorite(movieId),
     onSuccess: (data) => {

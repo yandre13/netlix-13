@@ -1,12 +1,28 @@
 import { headers } from 'next/headers'
 import ProfileButton from '../client/profile-button'
-import { getProfiles } from '@/lib/prisma/user'
-import { getFavoriteMovies } from '@/lib/prisma/favoritesMovies'
+import { getProfiles } from '@/db/functions/profiles'
+import { redirect } from 'next/navigation'
 
 async function getMyProfiles() {
   const headersList = headers()
   const userId = JSON.parse(headersList.get('x-user')!) //middleware will set this header
-  const data = await getProfiles(userId)
+  let data = await getProfiles(userId)
+
+  const maxWaitTime = 4000 // max wait time in milliseconds
+  const checkInterval = 1000 // interval between checks in milliseconds
+  let elapsedTime = 0 // elapsed time in milliseconds
+
+  while (data?.length === 0 && elapsedTime < maxWaitTime) {
+    await new Promise((resolve) => setTimeout(resolve, checkInterval)) // Espera el intervalo de verificación
+    elapsedTime += checkInterval
+    data = await getProfiles(userId)
+  }
+
+  if (data?.length === 0) {
+    // Realiza la acción deseada si no se ha obtenido la data después del tiempo máximo de espera
+    redirect('/')
+  }
+
   return data
 }
 

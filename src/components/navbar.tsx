@@ -3,7 +3,7 @@ import Image from 'next/image'
 import { Button } from './ui/button'
 import { ChevronDown, Search, Bell } from 'lucide-react'
 import { cookies } from 'next/headers'
-import { Profile } from '@prisma/client'
+import type { ProfileProps } from '@/db/schema'
 import ProfileMenu from './client/profile-menu'
 import NavbarListener from './client/navbar-listener'
 
@@ -34,7 +34,9 @@ const images = {
 
 export default function Navbar() {
   const cookiesList = cookies()
-  const profile: Profile = JSON.parse(cookiesList.get('my-profile')?.value!) //middleware will set this cookie
+  const profile: ProfileProps = JSON.parse(
+    cookiesList.get('my-profile')?.value!
+  ) //middleware will set this cookie
 
   return (
     <>
