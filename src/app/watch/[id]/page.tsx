@@ -1,15 +1,25 @@
 import { getMovieById } from '@/db/functions/movies'
 import { ChevronLeft } from 'lucide-react'
+import { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-export default async function Movie({
-  params,
-}: {
+type Props = {
   params: {
     id: string
   }
-}) {
+}
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  // fetch data
+  const movie = await getMovieById(params.id)
+
+  return {
+    title: movie?.title,
+    description: movie?.description,
+  }
+}
+
+export default async function Movie({ params }: Props) {
   const movie = await getMovieById(params.id)
 
   if (!movie) {
@@ -27,7 +37,7 @@ export default async function Movie({
         fixed z-10 flex w-full items-center gap-3 bg-black bg-opacity-70 p-4 lg:gap-5
       "
       >
-        <Link href="/watch">
+        <Link href="/browse">
           <ChevronLeft />
         </Link>
         <p

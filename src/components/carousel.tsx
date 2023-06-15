@@ -173,7 +173,7 @@ function CardCarouselM({ movie }: { movie: MovieProps }) {
             <ul className="flex gap-3">
               <li>
                 <Link
-                  href={`/watch/movies/${movie.id}`}
+                  href={`/watch/${movie.id}`}
                   className={cn(
                     'flex h-6 w-6 items-center justify-center rounded-full bg-slate-200 transition-all duration-500',
                     open && 'h-8 w-8'

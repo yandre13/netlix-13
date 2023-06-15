@@ -19,12 +19,12 @@ export default function ProfileButton({
   return (
     <button
       className="rounded-md transition-all ease-in-out hover:scale-105 focus:ring-1 focus:ring-white focus:ring-offset-2"
-      // href="/watch"
+      // href="/browse"
       onClick={() => {
         // setProfile(profile)
         write(profile)
         // console.log('setting', { profile })
-        router.push('/watch')
+        router.push('/browse')
         // router.refresh()
       }}
     >

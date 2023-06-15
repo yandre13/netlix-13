@@ -1,29 +1,20 @@
-'use client'
-import Spinner from '@/components/spinner'
-import { ClerkLoaded, ClerkLoading, SignIn, SignUp } from '@clerk/nextjs'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import LoginClient from '@/components/client/login'
+import { Metadata } from 'next'
 
 const images = {
   logo: `${process.env.NEXT_PUBLIC_IMAGES_URL}/applogo.png`,
   hero: `${process.env.NEXT_PUBLIC_IMAGES_URL}/hero.jpg`,
 }
 
+export const metadata: Metadata = {
+  title: 'Login - Netlix',
+  description:
+    'Unlimited movies, TV shows, and more. Watch anywhere. Cancel anytime.',
+}
+
 export default function LoginPage() {
-  const [signup, setSignup] = useState(false)
-  const searchParams = useSearchParams()
-  const search = searchParams.get('signup')
-
-  useEffect(() => {
-    if (search === 'true') {
-      setSignup(true)
-    } else {
-      setSignup(false)
-    }
-  }, [signup, search])
-
   return (
     <main className="login relative flex min-h-screen w-full flex-col items-center justify-center">
       <Image
@@ -44,17 +35,7 @@ export default function LoginPage() {
           />
         </Link>
       </div>
-      <div className="relative flex h-full w-full flex-col items-center justify-center">
-        <ClerkLoading>
-          <Spinner />
-        </ClerkLoading>
-        <ClerkLoaded>
-          {!signup && (
-            <SignIn signUpUrl="/login?signup=true" redirectUrl="/profiles" />
-          )}
-          {signup && <SignUp signInUrl="/login" redirectUrl="/profiles" />}
-        </ClerkLoaded>
-      </div>
+      <LoginClient />
     </main>
   )
 }

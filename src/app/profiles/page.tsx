@@ -1,6 +1,13 @@
 import Profiles from '@/components/server/profiles'
 import Spinner from '@/components/spinner'
+import { Metadata } from 'next'
 import { Suspense } from 'react'
+
+export const metadata: Metadata = {
+  title: 'My Profiles - Netlix',
+  description:
+    'Unlimited movies, TV shows, and more. Watch anywhere. Cancel anytime.',
+}
 
 export default function ProfilesPage() {
   return (

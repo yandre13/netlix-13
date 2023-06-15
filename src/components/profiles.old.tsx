@@ -37,7 +37,7 @@
 // //             onClick={() => {
 // //               // setProfile(profile)
 // //               Cookies.set('my-profile', JSON.stringify(profile))
-// //               router.push('/watch')
+// //               router.push('/browse')
 // //             }}
 // //           >
 // //             <Image

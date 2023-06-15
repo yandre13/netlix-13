@@ -198,7 +198,7 @@ export function CardModal({ movie }: { movie: MovieProps }) {
                 <li>
                   <Link
                     className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200"
-                    href={`/watch/movies/${movie.id}`}
+                    href={`/watch/${movie.id}`}
                   >
                     <Play className="h-6 w-6 fill-black stroke-black pl-0.5" />
                   </Link>

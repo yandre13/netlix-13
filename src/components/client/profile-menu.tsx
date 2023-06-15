@@ -25,6 +25,10 @@ export default function ProfileMenu({
       label: 'Change profile',
       onSelect: () => router.push('/profiles'),
     },
+    {
+      label: 'New profile',
+      onSelect: () => router.push('/profiles/new'),
+    },
   ]
   const menuFooter = {
     label: 'Logout',

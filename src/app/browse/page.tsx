@@ -8,7 +8,14 @@ import FavoritesList from '@/components/client/favorites-list'
 import { ButtonOpenModal, CardModalWrapper } from '@/components/info-banner'
 import Link from 'next/link'
 import { Play } from 'lucide-react'
+import Footer from '@/components/footer'
+import { Metadata } from 'next'
 // import { ModalInfo } from '@/components/carousel'
+
+export const metadata: Metadata = {
+  title: 'Browse - Netlix',
+  description: 'Browse unlimited movies, TV shows, and more. Watch anywhere.',
+}
 
 export default async function Watch() {
   const movie = await getRandomMovie()
@@ -39,7 +46,7 @@ export default async function Watch() {
                 <div className="flex gap-4 lg:gap-6">
                   <Button className="mt-5 md:mt-8 lg:text-base">
                     <Link
-                      href={`/watch/movies/${movie.id}`}
+                      href={`/watch/${movie.id}`}
                       className="flex items-center"
                     >
                       <Play className="mr-2 h-5 w-5 fill-black stroke-black" />
@@ -63,6 +70,7 @@ export default async function Watch() {
         <CardModalWrapper />
         <div className="py-10"></div>
       </main>
+      <Footer />
     </>
   )
 }

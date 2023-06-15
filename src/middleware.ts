@@ -22,7 +22,7 @@ export default authMiddleware({
 
     req.headers.set('x-user', JSON.stringify(auth.userId))
     const userProfile = req.cookies.get('my-profile')
-    if (!userProfile && req.nextUrl.pathname === '/watch') {
+    if (!userProfile && req.nextUrl.pathname === '/browse') {
       const url = req.nextUrl.clone()
       url.pathname = '/profiles'
       return NextResponse.redirect(url)
