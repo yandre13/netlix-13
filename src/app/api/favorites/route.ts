@@ -32,7 +32,6 @@ export async function POST(req: FavoriteApiRequest) {
     const { movieId } = body
 
     const newFavorite = await addFavoriteMovie(profileId, movieId)
-    console.log({ newFavorite })
     return NextResponse.json({
       status: 201,
       message: 'new favorite added successfully',
