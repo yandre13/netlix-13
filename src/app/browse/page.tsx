@@ -32,7 +32,7 @@ export default async function Watch() {
             poster={movie.posterUrl}
             src={movie.trailerUrl}
             // controls
-            className="aspect-video w-full object-cover brightness-50"
+            className="aspect-video w-full object-cover brightness-50 lg:max-h-screen"
           />
           <div className="w-full lg:absolute lg:top-[33%]">
             <div className="container">
